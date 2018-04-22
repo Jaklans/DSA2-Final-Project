@@ -20,14 +20,29 @@ Octree::~Octree()
 void Octree::Initialize(vector3 min, vector3 max)
 {
 	//The center is between the minimum and the maximum
-	_center = vector3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.y + max.y) / 2);
+	_center = vector3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
 	//The half distance is the largest half distance
 	_halfDistance = max - _center;
+	_min = _center;
+	_max = _center;
 }
 
 //Get an address from the Octree
 OctreeAddress Octree::GetAddress(vector3 min, vector3 max)
 {
+	//optimization
+	/*if (min.x < _min.x)
+		_min.x = min.x;
+	if (min.y < _min.y)
+		_min.y = min.y;
+	if (min.z < _min.z)
+		_min.z = min.z;
+	if (_max.x < max.x)
+		_max.x = max.x;
+	if (_max.y < max.y)
+		_max.y = max.y;
+	if (_max.z < max.z)
+		_max.z = max.z;*/
 	OctreeAddress ret = OctreeAddress();
 
 	vector3 cen = _center;
@@ -105,6 +120,11 @@ void Octree::Declare(OctreeAddress& address, int depth)
 void Octree::Display()
 {
 	Draw(0, _center, _halfDistance);
+}
+
+void Octree::ReOptimize()
+{
+	//Initialize(_min, _max);
 }
 
 //Draw the subnodes recursively

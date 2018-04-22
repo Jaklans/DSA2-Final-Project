@@ -6,6 +6,7 @@ Date: 2017/07
 #define __MyENTITYMANAGER_H_
 
 #include "MyEntity.h"
+#include "Octree.h"
 
 namespace Simplex
 {
@@ -13,6 +14,24 @@ namespace Simplex
 //System Class
 class MyEntityManager
 {
+	//Physics
+	vector3 _gravity;
+	float _pressure;
+	//Octree
+	Octree _oct;
+public:
+	//Physics
+	void SetGrav(vector3 grav);
+	vector3 GetGrav();
+	void SetPressure(float pressure);
+	float GetPressure();
+	//Octree
+	Octree * GetOctree();
+
+private:
+
+
+
 	typedef MyEntity* PEntity; //MyEntity Pointer
 	uint m_uEntityCount = 0; //number of elements in the list
 	PEntity* m_mEntityArray = nullptr; //array of MyEntity pointers

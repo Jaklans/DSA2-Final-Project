@@ -57,6 +57,24 @@ void Simplex::MyEntity::Release(void)
 	SafeDelete(m_pRigidBody);
 	m_IDMap.erase(m_sUniqueID);
 }
+void Simplex::MyEntity::AddForce(vector3 force)
+{
+	_force += force;
+}
+void Simplex::MyEntity::ApplyPhysics(float deltaTime)
+{
+	_velocity = _force * deltaTime;
+	_force = vector3();
+	SetModelMatrix(glm::translate(_velocity) * m_m4ToWorld);
+}
+void Simplex::MyEntity::SetOctAddress(OctreeAddress & val)
+{
+	_octAddress = val;
+}
+OctreeAddress * Simplex::MyEntity::GetOctAddress()
+{
+	return &_octAddress;
+}
 //The big 3
 Simplex::MyEntity::MyEntity(String a_sFileName, String a_sUniqueID)
 {
@@ -241,7 +259,7 @@ bool Simplex::MyEntity::IsColliding(MyEntity* const other)
 
 	//if the entities are not living in the same dimension
 	//they are not colliding
-	if (!SharesDimension(other))
+	if (!_octAddress.Compare(other->_octAddress))
 		return false;
 
 	return m_pRigidBody->IsColliding(other->GetRigidBody());

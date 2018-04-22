@@ -6,6 +6,7 @@ Date: 2017/07
 #define __MYENTITY_H_
 
 #include "MyRigidBody.h"
+#include "OctreeAddress.h"
 
 namespace Simplex
 {
@@ -13,6 +14,30 @@ namespace Simplex
 //System Class
 class MyEntity
 {
+	//Physics
+	vector3 _velocity;
+	vector3 _force;
+	//Octree
+	OctreeAddress _octAddress;
+
+public:
+	//Physics
+	void AddForce(vector3 force);
+	void ApplyPhysics(float deltaTime);
+	//Octree
+	void SetOctAddress(OctreeAddress &val);
+	OctreeAddress * GetOctAddress();
+
+private:
+
+
+
+
+
+
+
+
+
 	bool m_bInMemory = false; //loaded flag
 	bool m_bSetAxis = false; //render axis flag
 	String m_sUniqueID = ""; //Unique identifier name

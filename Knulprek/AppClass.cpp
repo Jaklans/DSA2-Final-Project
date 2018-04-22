@@ -55,8 +55,10 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	//m_pRoot->Display();
-	
+	Octree::display = true;
+	m_pEntityMngr->GetOctree()->Display();
+	m_pEntityMngr->GetOctree()->Refresh();
+
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
 	

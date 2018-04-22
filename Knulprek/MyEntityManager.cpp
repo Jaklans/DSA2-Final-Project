@@ -1,9 +1,35 @@
 #include "MyEntityManager.h"
 using namespace Simplex;
+
+
+void Simplex::MyEntityManager::SetGrav(vector3 grav)
+{
+	_gravity = grav;
+}
+vector3 Simplex::MyEntityManager::GetGrav()
+{
+	return _gravity;
+}
+void Simplex::MyEntityManager::SetPressure(float pressure)
+{
+	_pressure = pressure;
+}
+float Simplex::MyEntityManager::GetPressure()
+{
+	return _pressure;
+}
+Octree * Simplex::MyEntityManager::GetOctree()
+{
+	return &_oct;
+}
+
 //  MyEntityManager
 Simplex::MyEntityManager* Simplex::MyEntityManager::m_pInstance = nullptr;
 void Simplex::MyEntityManager::Init(void)
 {
+	_gravity = vector3(0, -9.8f, 0);
+	_pressure = 4;
+	_oct.Initialize(vector3(-34.0f, -34.0f, -34.0f), vector3(34.0f, 34.0f, 34.0f));
 	m_uEntityCount = 0;
 	m_mEntityArray = nullptr;
 }
@@ -167,18 +193,37 @@ Simplex::MyEntityManager::~MyEntityManager(){Release();};
 // other methods
 void Simplex::MyEntityManager::Update(void)
 {
+	//_oct.ReOptimize();
+
 	//Clear all collisions
 	for (uint i = 0; i < m_uEntityCount; i++)
 	{
 		m_mEntityArray[i]->ClearCollisionList();
 	}
 
+	//Physics
+	for (uint i = 0; i < m_uEntityCount; i++)
+	{
+		//Apply gravity
+		m_mEntityArray[i]->AddForce(_gravity);
+		//Move everything
+		m_mEntityArray[i]->ApplyPhysics(.1f);
+		m_mEntityArray[i]->SetOctAddress(_oct.GetAddress(m_mEntityArray[i]->GetRigidBody()->GetMinGlobal(), m_mEntityArray[i]->GetRigidBody()->GetMaxGlobal()));
+	}
+
+
 	//check collisions
 	for (uint i = 0; i < m_uEntityCount - 1; i++)
 	{
 		for (uint j = i + 1; j < m_uEntityCount; j++)
 		{
-			m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
+			if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j])) 
+			{
+				//Resolve collisions
+				vector3 overlap;
+				m_mEntityArray[i]->AddForce(overlap * _pressure);
+				m_mEntityArray[j]->AddForce(overlap * -_pressure);
+			}
 		}
 	}
 }

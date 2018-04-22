@@ -10,6 +10,11 @@ class Octree
 	vector3 _center;
 	//The bounds
 	vector3 _halfDistance;
+
+	//Optimization
+	vector3 _min;
+	vector3 _max;
+
 	//The boolean of visual information (yes this is completely neccesary to draw the Octree)
 	static std::vector<bool> DisplayOctant;
 
@@ -29,6 +34,9 @@ public:
 	static void Declare(OctreeAddress &address, int depth);
 	//Draws the Octree
 	void Display();
+
+	//ReOptimizes the Octree, for best results call once per frame
+	void ReOptimize();
 
 
 
