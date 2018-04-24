@@ -94,21 +94,38 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	m_v3CenterG = vector3(m_m4ToWorld * vector4(m_v3CenterL, 1.0f));
 
 	//Identify the max and min
-	m_v3MaxG = vector3(m_m4ToWorld * vector4(m_fRadius, m_fRadius, m_fRadius, 1.0f));
-	m_v3MinG = vector3(m_m4ToWorld * -vector4(m_fRadius, m_fRadius, m_fRadius, -1.0f));
+	m_v3MaxG = vector3(m_m4ToWorld * vector4(m_v3MaxL));
+	m_v3MinG = vector3(m_m4ToWorld * vector4(m_v3MinL));
 }
 //The big 3
-MyRigidBody::MyRigidBody(float radius, colliderType type, float height)
+MyRigidBody::MyRigidBody(colliderType type)
 {
 	Init();
 
-	//If there are none just return, we have no information to create the BS from
-	if (radius <= 0)
-		return;
+	collider = type;
 
-	//Max and min as the first vector of the list
-	m_v3MaxL = vector3(radius);
-	m_v3MinL = -m_v3MaxL;
+	switch (type)
+	{
+	case sphere:
+		//Max and min as the first vector of the list
+		m_v3MaxL = vector3(1);
+		m_v3MinL = -m_v3MaxL;
+
+		m_fRadius = 1;
+		break;
+	case cylinder:
+		m_v3MaxL = vector3(.25f, 7.5f, .25f);
+		m_v3MinL = -m_v3MaxL;
+
+		m_fRadius = .25f;
+		break;
+	case inverseCylinder:
+		m_v3MaxL = vector3(6, 24, 6);
+		m_v3MinL = -m_v3MaxL;
+
+		m_fRadius = 6;
+		break;
+	}
 
 	//with model matrix being the identity, local and global are the same
 	m_v3MinG = m_v3MinL;
@@ -117,7 +134,8 @@ MyRigidBody::MyRigidBody(float radius, colliderType type, float height)
 	//with the max and the min we calculate the center
 	m_v3CenterL = vector3(0);
 
-	m_fRadius = radius;
+	//the center is 0
+	m_v3CenterL = vector3(0);
 }
 MyRigidBody::MyRigidBody(MyRigidBody const& other)
 {

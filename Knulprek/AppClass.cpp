@@ -10,6 +10,7 @@ void Application::InitVariables(void)
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
+	/*
 #ifdef DEBUG
 	uint uInstances = 900;
 #else
@@ -29,6 +30,25 @@ void Application::InitVariables(void)
 			m_pEntityMngr->SetModelMatrix(m4Position);
 		}
 	}
+
+	*/
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			for (int k = 0; k < 3; k++) {
+				m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
+				m_pEntityMngr->SetModelMatrix(glm::translate(vector3(i * 4 - 4, j * 4 + 25, k * 4 - 4)));
+			}
+		}
+	}
+
+	for (int i = 0; i < 10; i++) {
+		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);
+		m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, -i, 0)) * glm::rotate(18.0f * float(i), vector3(0, 1, 0)) * glm::rotate(90.0f, vector3(1, 0, 0)));
+	}
+
+	m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
+
 	m_uOctantLevels = 1;
 	m_pEntityMngr->Update();
 }
@@ -42,7 +62,7 @@ void Application::Update(void)
 
 	//Is the first person camera active?
 	CameraRotation();
-	
+
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 

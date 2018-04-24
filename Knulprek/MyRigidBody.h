@@ -19,8 +19,6 @@ namespace Simplex
 //System Class
 class MyRigidBody
 {
-	colliderType collider = sphere;
-
 	typedef MyRigidBody* PRigidBody; //Entity Pointer
 	MeshManager* m_pMeshMngr = nullptr; //for displaying the Rigid Body
 
@@ -51,12 +49,13 @@ class MyRigidBody
 	PRigidBody* m_CollidingArray = nullptr; //array of rigid bodies this one is colliding with
 
 public:
+	colliderType collider = sphere;
 	/*
 	Usage: Constructor
 	Arguments: std::vector<vector3> a_pointList -> list of points to make the Rigid Body for
 	Output: class object instance
 	*/
-	MyRigidBody(float radius, colliderType type = sphere, float height = 0);
+	MyRigidBody(colliderType type = sphere);
 	/*
 	Usage: Copy Constructor
 	Arguments: class object to copy
