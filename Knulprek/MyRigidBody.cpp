@@ -93,84 +93,31 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 
 	m_v3CenterG = vector3(m_m4ToWorld * vector4(m_v3CenterL, 1.0f));
 
-	//Calculate the 8 corners of the cube
-	vector3 v3Corner[8];
-	//Back square
-	v3Corner[0] = m_v3MinL;
-	v3Corner[1] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MinL.z);
-	v3Corner[2] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MinL.z);
-	v3Corner[3] = vector3(m_v3MaxL.x, m_v3MaxL.y, m_v3MinL.z);
-
-	//Front square
-	v3Corner[4] = vector3(m_v3MinL.x, m_v3MinL.y, m_v3MaxL.z);
-	v3Corner[5] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MaxL.z);
-	v3Corner[6] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MaxL.z);
-	v3Corner[7] = m_v3MaxL;
-
-	//Place them in world space
-	for (uint uIndex = 0; uIndex < 8; ++uIndex)
-	{
-		v3Corner[uIndex] = vector3(m_m4ToWorld * vector4(v3Corner[uIndex], 1.0f));
-	}
-
-	//Identify the max and min as the first corner
-	m_v3MaxG = m_v3MinG = v3Corner[0];
-
-	//get the new max and min for the global box
-	for (uint i = 1; i < 8; ++i)
-	{
-		if (m_v3MaxG.x < v3Corner[i].x) m_v3MaxG.x = v3Corner[i].x;
-		else if (m_v3MinG.x > v3Corner[i].x) m_v3MinG.x = v3Corner[i].x;
-
-		if (m_v3MaxG.y < v3Corner[i].y) m_v3MaxG.y = v3Corner[i].y;
-		else if (m_v3MinG.y > v3Corner[i].y) m_v3MinG.y = v3Corner[i].y;
-
-		if (m_v3MaxG.z < v3Corner[i].z) m_v3MaxG.z = v3Corner[i].z;
-		else if (m_v3MinG.z > v3Corner[i].z) m_v3MinG.z = v3Corner[i].z;
-	}
-
-	//we calculate the distance between min and max vectors
-	m_v3ARBBSize = m_v3MaxG - m_v3MinG;
+	//Identify the max and min
+	m_v3MaxG = vector3(m_m4ToWorld * vector4(m_fRadius, m_fRadius, m_fRadius, 1.0f));
+	m_v3MinG = vector3(m_m4ToWorld * -vector4(m_fRadius, m_fRadius, m_fRadius, -1.0f));
 }
 //The big 3
-MyRigidBody::MyRigidBody(std::vector<vector3> a_pointList)
+MyRigidBody::MyRigidBody(float radius, colliderType type, float height)
 {
 	Init();
-	//Count the points of the incoming list
-	uint uVertexCount = a_pointList.size();
 
 	//If there are none just return, we have no information to create the BS from
-	if (uVertexCount == 0)
+	if (radius <= 0)
 		return;
 
 	//Max and min as the first vector of the list
-	m_v3MaxL = m_v3MinL = a_pointList[0];
-
-	//Get the max and min out of the list
-	for (uint i = 1; i < uVertexCount; ++i)
-	{
-		if (m_v3MaxL.x < a_pointList[i].x) m_v3MaxL.x = a_pointList[i].x;
-		else if (m_v3MinL.x > a_pointList[i].x) m_v3MinL.x = a_pointList[i].x;
-
-		if (m_v3MaxL.y < a_pointList[i].y) m_v3MaxL.y = a_pointList[i].y;
-		else if (m_v3MinL.y > a_pointList[i].y) m_v3MinL.y = a_pointList[i].y;
-
-		if (m_v3MaxL.z < a_pointList[i].z) m_v3MaxL.z = a_pointList[i].z;
-		else if (m_v3MinL.z > a_pointList[i].z) m_v3MinL.z = a_pointList[i].z;
-	}
+	m_v3MaxL = vector3(radius);
+	m_v3MinL = -m_v3MaxL;
 
 	//with model matrix being the identity, local and global are the same
 	m_v3MinG = m_v3MinL;
 	m_v3MaxG = m_v3MaxL;
 
 	//with the max and the min we calculate the center
-	m_v3CenterL = (m_v3MaxL + m_v3MinL) / 2.0f;
+	m_v3CenterL = vector3(0);
 
-	//we calculate the distance between min and max vectors
-	m_v3HalfWidth = (m_v3MaxL - m_v3MinL) / 2.0f;
-
-	//Get the distance between the center and either the min or the max
-	m_fRadius = glm::distance(m_v3CenterL, m_v3MinL);
+	m_fRadius = radius;
 }
 MyRigidBody::MyRigidBody(MyRigidBody const& other)
 {
@@ -275,61 +222,69 @@ void MyRigidBody::ClearCollidingList(void)
 		m_CollidingArray = nullptr;
 	}
 }
-uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
-{
-	/*
-	Your code goes here instead of this comment;
-
-	For this method, if there is an axis that separates the two objects
-	then the return will be different than 0; 1 for any separating axis
-	is ok if you are not going for the extra credit, if you could not
-	find a separating axis you need to return 0, there is an enum in
-	Simplex that might help you [eSATResults] feel free to use it.
-	(eSATResults::SAT_NONE has a value of 0)
-	*/
-
-	//there is no axis test that separates this two objects
-	return 0;
-}
 bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 {
-	//check if spheres are colliding
+	if (collider != sphere) return false;
+
 	bool bColliding = true;
-	//bColliding = (glm::distance(GetCenterGlobal(), other->GetCenterGlobal()) < m_fRadius + other->m_fRadius);
-	//if they are check the Axis Aligned Bounding Box
-	if (bColliding) //they are colliding with bounding sphere
-	{
-		if (this->m_v3MaxG.x < a_pOther->m_v3MinG.x) //this to the right of other
-			bColliding = false;
-		if (this->m_v3MinG.x > a_pOther->m_v3MaxG.x) //this to the left of other
-			bColliding = false;
 
-		if (this->m_v3MaxG.y < a_pOther->m_v3MinG.y) //this below of other
-			bColliding = false;
-		if (this->m_v3MinG.y > a_pOther->m_v3MaxG.y) //this above of other
-			bColliding = false;
+	switch (a_pOther->collider) {
+	case sphere:
+		vector3 distance = m_v3CenterG - a_pOther->m_v3CenterG;
+		float magnitude = glm::distance(distance, ZERO_V3);
 
-		if (this->m_v3MaxG.z < a_pOther->m_v3MinG.z) //this behind of other
-			bColliding = false;
-		if (this->m_v3MinG.z > a_pOther->m_v3MaxG.z) //this in front of other
-			bColliding = false;
+		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
 
-		if (bColliding) //they are colliding with bounding box also
-		{
-			this->AddCollisionWith(a_pOther);
-			a_pOther->AddCollisionWith(this);
+		if (bColliding) {
+			//return distance * (magnitude - m_fRadius - a_pOther->m_fRadius)
 		}
-		else //they are not colliding with bounding box
-		{
-			this->RemoveCollisionWith(a_pOther);
-			a_pOther->RemoveCollisionWith(this);
+		break;
+	case cylinder:
+		//Direction a cylinder is pointing. Requires implementation
+		vector3 direction = AXIS_X;
+
+		vector3 distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
+		float magnitude = glm::distance(distance, ZERO_V3);
+
+		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
+
+		if (bColliding) {
+			//return distance * (magnitude - m_fRadius - a_pOther->m_fRadius)
 		}
+		break;
+	case inverseCylinder:
+		vector3 direction = AXIS_Y;
+
+		vector3 distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
+		float magnitude = glm::distance(distance, ZERO_V3);
+
+		bColliding = magnitude > -m_fRadius + a_pOther->m_fRadius;
+
+		if (bColliding) {
+			//return distance * (magnitude - m_fRadius - a_pOther->m_fRadius)
+		}
+		break;
 	}
-	else //they are not colliding with bounding sphere
+
+	
+
+
+	bColliding = (glm::distance(GetCenterGlobal(), a_pOther->GetCenterGlobal()) < m_fRadius + a_pOther->m_fRadius);
+	
+
+
+
+	if (bColliding)
+	{
+		this->AddCollisionWith(a_pOther);
+		a_pOther->AddCollisionWith(this);
+	}
+	else
 	{
 		this->RemoveCollisionWith(a_pOther);
 		a_pOther->RemoveCollisionWith(this);
 	}
+
 	return bColliding;
 }
 

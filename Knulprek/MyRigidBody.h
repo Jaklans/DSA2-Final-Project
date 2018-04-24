@@ -7,12 +7,20 @@ Date: 2017/06
 
 #include "Simplex\Mesh\Model.h"
 
+enum colliderType {
+	sphere,
+	cylinder,
+	inverseCylinder
+};
+
 namespace Simplex
 {
 
 //System Class
 class MyRigidBody
 {
+	colliderType collider = sphere;
+
 	typedef MyRigidBody* PRigidBody; //Entity Pointer
 	MeshManager* m_pMeshMngr = nullptr; //for displaying the Rigid Body
 
@@ -48,7 +56,7 @@ public:
 	Arguments: std::vector<vector3> a_pointList -> list of points to make the Rigid Body for
 	Output: class object instance
 	*/
-	MyRigidBody(std::vector<vector3> a_pointList);
+	MyRigidBody(float radius, colliderType type = sphere, float height = 0);
 	/*
 	Usage: Copy Constructor
 	Arguments: class object to copy
