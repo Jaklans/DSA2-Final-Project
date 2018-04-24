@@ -228,10 +228,13 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 
 	bool bColliding = true;
 
+	vector3 direction;
+	vector3 distance;
+	float magnitude;
 	switch (a_pOther->collider) {
 	case sphere:
-		vector3 distance = m_v3CenterG - a_pOther->m_v3CenterG;
-		float magnitude = glm::distance(distance, ZERO_V3);
+		distance = m_v3CenterG - a_pOther->m_v3CenterG;
+		magnitude = glm::distance(distance, ZERO_V3);
 
 		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
 
@@ -241,10 +244,10 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 		break;
 	case cylinder:
 		//Direction a cylinder is pointing. Requires implementation
-		vector3 direction = AXIS_X;
+		direction = AXIS_X;
 
-		vector3 distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
-		float magnitude = glm::distance(distance, ZERO_V3);
+		distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
+		magnitude = glm::distance(distance, ZERO_V3);
 
 		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
 
@@ -253,10 +256,10 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 		}
 		break;
 	case inverseCylinder:
-		vector3 direction = AXIS_Y;
+		direction = AXIS_Y;
 
-		vector3 distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
-		float magnitude = glm::distance(distance, ZERO_V3);
+		distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
+		magnitude = glm::distance(distance, ZERO_V3);
 
 		bColliding = magnitude > -m_fRadius + a_pOther->m_fRadius;
 
