@@ -59,10 +59,12 @@ void Simplex::MyEntity::Release(void)
 }
 void Simplex::MyEntity::AddForce(vector3 force)
 {
+	//Everything has mass of 1 :D
 	_force += force;
 }
 void Simplex::MyEntity::ApplyPhysics(float deltaTime)
 {
+	if (m_pRigidBody->collider != sphere) return;
 	_velocity = _force * deltaTime;
 	_force = vector3();
 	SetModelMatrix(glm::translate(_velocity) * m_m4ToWorld);
@@ -76,9 +78,22 @@ OctreeAddress * Simplex::MyEntity::GetOctAddress()
 	return &_octAddress;
 }
 //The big 3
-Simplex::MyEntity::MyEntity(String a_sFileName, String a_sUniqueID)
+Simplex::MyEntity::MyEntity(String a_sFileName, colliderType type, String a_sUniqueID)
 {
 	Init();
+
+	//Inverse Cylinder has no model
+	if (type == inverseCylinder) {
+		GenUniqueID(a_sUniqueID);
+		m_sUniqueID = a_sUniqueID;
+		m_IDMap[a_sUniqueID] = this;
+
+		//Rigid body
+		m_pRigidBody = new MyRigidBody(type); //generate a rigid body
+
+		return;
+	}
+
 	m_pModel = new Model();
 	m_pModel->Load(a_sFileName);
 	//if the model is loaded
@@ -88,9 +103,9 @@ Simplex::MyEntity::MyEntity(String a_sFileName, String a_sUniqueID)
 		m_sUniqueID = a_sUniqueID;
 		m_IDMap[a_sUniqueID] = this;
 
+		
 		//Rigid body
-		float radius = 1;
-		m_pRigidBody = new MyRigidBody(radius); //generate a rigid body
+		m_pRigidBody = new MyRigidBody(type); //generate a rigid body
 		m_bInMemory = true; //mark this entity as viable
 	}
 }
@@ -265,7 +280,14 @@ bool Simplex::MyEntity::IsColliding(MyEntity* const other)
 	if (!_octAddress.Compare(other->_octAddress))
 		return false;
 
-	return m_pRigidBody->IsColliding(other->GetRigidBody());
+	vector3 collisionForce;
+	bool result = m_pRigidBody->IsColliding(other->GetRigidBody(), collisionForce);
+
+	if (result) {
+		AddForce(collisionForce);
+	}
+
+	return result;
 }
 void Simplex::MyEntity::ClearCollisionList(void)
 {

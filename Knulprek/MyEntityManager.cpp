@@ -212,6 +212,7 @@ void Simplex::MyEntityManager::Update(void)
 	}
 
 
+	if (m_uEntityCount == 0) return;
 	//check collisions
 	for (uint i = 0; i < m_uEntityCount - 1; i++)
 	{
@@ -227,10 +228,10 @@ void Simplex::MyEntityManager::Update(void)
 		}
 	}
 }
-void Simplex::MyEntityManager::AddEntity(String a_sFileName, String a_sUniqueID)
+void Simplex::MyEntityManager::AddEntity(String a_sFileName, colliderType type, String a_sUniqueID)
 {
 	//Create a temporal entity to store the object
-	MyEntity* pTemp = new MyEntity(a_sFileName, a_sUniqueID);
+	MyEntity* pTemp = new MyEntity(a_sFileName, type, a_sUniqueID);
 	//if I was able to generate it add it to the list
 	if (pTemp->IsInitialized())
 	{
