@@ -98,7 +98,7 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	m_v3MinG = vector3(m_m4ToWorld * vector4(m_v3MinL, 1.0f));
 
 	if (collider != sphere) {
-		cylinderNormal = vector3(m_m4ToWorld * vector4(AXIS_Y, 1.0f));
+		cylinderNormal = vector3(m_m4ToWorld * vector4(AXIS_Y, 0.0f));
 	}
 }
 //The big 3
@@ -250,39 +250,44 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 
 	bool bColliding = false;
 
-	vector3 distance;
+	vector3 difference;
 	float magnitude;
 	switch (a_pOther->collider) {
 	case sphere:
-		distance = m_v3CenterG - a_pOther->m_v3CenterG;
-		magnitude = glm::distance(distance, ZERO_V3);
+		difference = m_v3CenterG - a_pOther->m_v3CenterG;
+		magnitude = glm::distance(difference, ZERO_V3);
 
 		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			collisionForce = distance * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			collisionForce = difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
 			bColliding = true;
 		}
 		break;
 	case cylinder:
-		distance = a_pOther->cylinderNormal * glm::dot(a_pOther->cylinderNormal, m_v3CenterG) - m_v3CenterG;
-		magnitude = glm::distance(distance, ZERO_V3);
+	{
+		//Convert this objects center to cylinders local space
+		vector3 thisCenter = vector3(a_pOther->m_m4ToWorld * vector4(m_v3CenterG, 1.0f));
+
+		difference = a_pOther->cylinderNormal * glm::dot(a_pOther->cylinderNormal, thisCenter) - thisCenter;
+		magnitude = glm::distance(difference, ZERO_V3);
 
 		bColliding = magnitude < m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			collisionForce = distance * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			collisionForce = difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
 			bColliding = true;
 		}
 		break;
+	}
 	case inverseCylinder:
-		distance = a_pOther->cylinderNormal * glm::dot(a_pOther->cylinderNormal, m_v3CenterG) - m_v3CenterG;
-		magnitude = glm::distance(distance, ZERO_V3);
+		difference = a_pOther->cylinderNormal * glm::dot(a_pOther->cylinderNormal, m_v3CenterG) - m_v3CenterG;
+		magnitude = glm::distance(difference, ZERO_V3);
 
 		bColliding = magnitude > -m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			collisionForce = distance * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			collisionForce = difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
 			bColliding = true;
 		}
 		break;

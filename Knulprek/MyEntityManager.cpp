@@ -27,7 +27,7 @@ Octree * Simplex::MyEntityManager::GetOctree()
 Simplex::MyEntityManager* Simplex::MyEntityManager::m_pInstance = nullptr;
 void Simplex::MyEntityManager::Init(void)
 {
-	_gravity = vector3(0, -9.8f, 0);
+	_gravity = vector3(0, -2.5f, 0);//vector3(0, -9.8f, 0);
 	_pressure = 4;
 	_oct.Initialize(vector3(-34.0f, -34.0f, -34.0f), vector3(34.0f, 34.0f, 34.0f));
 	m_uEntityCount = 0;
