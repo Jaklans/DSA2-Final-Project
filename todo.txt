@@ -1,0 +1,8 @@
+setup system that
+	generate cylinders and spheres
+		translate them
+		rotate them
+			default straight vertical
+
+entitymanager -> addentity (_ type)
+	examples in appclass (initvariables)
