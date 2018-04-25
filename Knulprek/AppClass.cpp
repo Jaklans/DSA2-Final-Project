@@ -75,9 +75,30 @@ void Application::InitVariables(void)
 		m_pEntityMngr->SetModelMatrix(translatePegHeight * rotatePegHorizontally * flipPegToVertical);
 	}
 
-	// holeAngle = 360 / numHolesPerRing
-	// holeX = cos(holeAngle) * ringRadius
-	// holeY = sin(holeAngle) * ringRadius
+	// given: numHolesPerRing, ringRadius, ringBaseHeight, ringHeightIncrement
+	// BASE VALUES
+	// holeAngleIncrement = 360 / numHolesPerRing
+	// ringHalfHeight = ringHeightIncrement / 2
+	// LIST VALUES
+	// holes = vertex<point>
+	// holes.push_back(point)
+	// holes[i].X = cos(holeAngleIncrement * i) * ringRadius
+	// holes[i].Y = sin(holeAngleIncrement * i) * ringRadius
+	// holes[i].Z = ringBaseHeight + ringHeightIncrement * (i / numHolesPerRing)
+	// PEG CALCULATION VALUES, given hole1 and hole2
+	// holeXDiff = (hole2.X - hole1.X)
+	// holeYDiff = (hole2.Y - hole1.Y)
+	// holeZDiff = (hole2.Z - hole1.Z)
+	// horizontalLength = sqrt(holeXDiff^2 + holeYDiff^2)
+	// horizontalAngle = arctan(holeYDiff / holeXDiff)
+	// verticalAngle = arctan(holeZDiff / horizontalLength)
+	// !!!!! pegRotation = rotate(horizontalAngle, vector3(0, 1, 0)) * rotate(verticalAngle, vector3(1, 0, 0))
+	// distanceToCenter = abs(hole2.X * hole1.Y - hole2.Y * hole1.X) / horizontalLength
+	// pegXTranslation = distanceToCenter * cos(horizontalAngle)
+	// pegYTranslation = distanceToCenter * sin(horizontalAngle)
+	// pegZTranslation = hole1.Z + ringHalfHeight
+	// !!!!! pegTranslation = translate(vector3(pegXTranslation, pegYTranslation, pegZTranslation))
+
 
 
 	//m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
