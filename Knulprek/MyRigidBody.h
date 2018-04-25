@@ -50,6 +50,7 @@ class MyRigidBody
 
 public:
 	colliderType collider = sphere;
+	vector3 cylinderNormal = AXIS_Y;
 	/*
 	Usage: Constructor
 	Arguments: std::vector<vector3> a_pointList -> list of points to make the Rigid Body for
@@ -114,7 +115,7 @@ public:
 	ARGUMENTS: MyRigidBody* const other -> inspected rigid body
 	OUTPUT: are they colliding?
 	*/
-	bool IsColliding(MyRigidBody* const other);
+	bool IsColliding(MyRigidBody* const other, vector3& collisionForce);
 #pragma region Accessors
 	/*
 	Usage: Gets visibility of bounding sphere

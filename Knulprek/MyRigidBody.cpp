@@ -94,8 +94,12 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	m_v3CenterG = vector3(m_m4ToWorld * vector4(m_v3CenterL, 1.0f));
 
 	//Identify the max and min
-	m_v3MaxG = vector3(m_m4ToWorld * vector4(m_v3MaxL));
-	m_v3MinG = vector3(m_m4ToWorld * vector4(m_v3MinL));
+	m_v3MaxG = vector3(m_m4ToWorld * vector4(m_v3MaxL, 1.0f));
+	m_v3MinG = vector3(m_m4ToWorld * vector4(m_v3MinL, 1.0f));
+
+	if (collider != sphere) {
+		cylinderNormal = vector3(m_m4ToWorld * vector4(AXIS_Y, 1.0f));
+	}
 }
 //The big 3
 MyRigidBody::MyRigidBody(colliderType type)
@@ -240,13 +244,12 @@ void MyRigidBody::ClearCollidingList(void)
 		m_CollidingArray = nullptr;
 	}
 }
-bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
+bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionForce)
 {
 	if (collider != sphere) return false;
 
-	bool bColliding = true;
+	bool bColliding = false;
 
-	vector3 direction;
 	vector3 distance;
 	float magnitude;
 	switch (a_pOther->collider) {
@@ -257,43 +260,38 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			//return distance * (magnitude - m_fRadius - a_pOther->m_fRadius)
+			collisionForce = distance * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			bColliding = true;
 		}
 		break;
 	case cylinder:
-		//Direction a cylinder is pointing. Requires implementation
-		direction = AXIS_X;
-
-		distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
+		distance = a_pOther->cylinderNormal * glm::dot(a_pOther->cylinderNormal, m_v3CenterG) - m_v3CenterG;
 		magnitude = glm::distance(distance, ZERO_V3);
 
-		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
+		bColliding = magnitude < m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			//return distance * (magnitude - m_fRadius - a_pOther->m_fRadius)
+			collisionForce = distance * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			bColliding = true;
 		}
 		break;
 	case inverseCylinder:
-		direction = AXIS_Y;
-
-		distance = direction * glm::dot(direction, a_pOther->m_v3CenterG) - a_pOther->m_v3CenterG;
+		distance = a_pOther->cylinderNormal * glm::dot(a_pOther->cylinderNormal, m_v3CenterG) - m_v3CenterG;
 		magnitude = glm::distance(distance, ZERO_V3);
 
 		bColliding = magnitude > -m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			//return distance * (magnitude - m_fRadius - a_pOther->m_fRadius)
+			collisionForce = distance * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			bColliding = true;
 		}
 		break;
 	}
 
+
+	//I dont know who coded this or if it is nessesary
+	//bColliding = (glm::distance(GetCenterGlobal(), a_pOther->GetCenterGlobal()) < m_fRadius + a_pOther->m_fRadius);
 	
-
-
-	bColliding = (glm::distance(GetCenterGlobal(), a_pOther->GetCenterGlobal()) < m_fRadius + a_pOther->m_fRadius);
-	
-
-
 
 	if (bColliding)
 	{

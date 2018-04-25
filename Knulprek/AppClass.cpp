@@ -47,7 +47,7 @@ void Application::InitVariables(void)
 		m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, -i, 0)) * glm::rotate(18.0f * float(i), vector3(0, 1, 0)) * glm::rotate(90.0f, vector3(1, 0, 0)));
 	}
 
-	m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
+	//m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
 
 	m_uOctantLevels = 1;
 	m_pEntityMngr->Update();
