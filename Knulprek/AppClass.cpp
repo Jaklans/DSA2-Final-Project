@@ -49,41 +49,46 @@ void Application::InitVariables(void)
 	//	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, -i, 0)) * glm::rotate(18.0f * float(i), vector3(0, 1, 0)) * glm::rotate(90.0f, vector3(1, 0, 0)));
 	//}
 
-	// changeable parameters
-	int numPegs = 50;
-	float pegAngleVariationFactor = 0.2f; // maximum peg angular variation, factor of pegAngleIncrement
-	float pegHorizontalVariationFactor = 8;
-	float pegVerticalCompressionFactor = 0.2f;
+	//// changeable parameters
+	//int numPegs = 50;
+	//float pegAngleVariationFactor = 0.2f; // maximum peg angular variation, factor of pegAngleIncrement
+	//float pegHorizontalVariationFactor = 8;
+	//float pegVerticalCompressionFactor = 0.2f;
 
-	//calculated values
-	float pegAngleIncrement = 180 / (float)numPegs;
-	std::vector<float> pegHeights;
-	for (int i = 0; i < numPegs; i++)
-	{
-		float currentPegAngleVariation = pegAngleIncrement * pegAngleVariationFactor * std::rand() / (float)RAND_MAX;
-		pegHeights.push_back(i * pegAngleIncrement + currentPegAngleVariation);
-	}
-	std::random_shuffle(pegHeights.begin(), pegHeights.end()); // shuffle angles so that we can generate heights in linear order
+	////calculated values
+	//float pegAngleIncrement = 180 / (float)numPegs;
+	//std::vector<float> pegHeights;
+	//for (int i = 0; i < numPegs; i++)
+	//{
+	//	float currentPegAngleVariation = pegAngleIncrement * pegAngleVariationFactor * std::rand() / (float)RAND_MAX;
+	//	pegHeights.push_back(i * pegAngleIncrement + currentPegAngleVariation);
+	//}
+	//std::random_shuffle(pegHeights.begin(), pegHeights.end()); // shuffle angles so that we can generate heights in linear order
 
-	// DON'T SCALE, ask for different maya model instead
-	// generate cylinders
-	glm::mat4 flipPegToVertical = glm::rotate(90.0f, vector3(1, 0, 0));
-	for (int i = 0; i < numPegs; i++) {
-		glm::mat4 rotatePegHorizontally = glm::rotate(pegHeights[i], vector3(0, 1, 0));
-		glm::mat4 translatePegHeight = glm::translate(vector3(0, -i * pegVerticalCompressionFactor, 0));
-		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);
-		m_pEntityMngr->SetModelMatrix(translatePegHeight * rotatePegHorizontally * flipPegToVertical);
-	}
+	//// DON'T SCALE, ask for different maya model instead
+	//// generate cylinders
+	//glm::mat4 flipPegToVertical = glm::rotate(90.0f, vector3(1, 0, 0));
+	//for (int i = 0; i < numPegs; i++) {
+	//	glm::mat4 rotatePegHorizontally = glm::rotate(pegHeights[i], vector3(0, 1, 0));
+	//	glm::mat4 translatePegHeight = glm::translate(vector3(0, -i * pegVerticalCompressionFactor, 0));
+	//	m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);
+	//	m_pEntityMngr->SetModelMatrix(translatePegHeight * rotatePegHorizontally * flipPegToVertical);
+	//}
 
-	// given: numHolesPerRing, ringRadius, ringBaseHeight, ringHeightIncrement
+
+
+
+
+
+	// given: numHolesPerRing, ringDiameter, ringBaseHeight, ringHeightIncrement, numHoles
 	// BASE VALUES
 	// holeAngleIncrement = 360 / numHolesPerRing
 	// ringHalfHeight = ringHeightIncrement / 2
-	// LIST VALUES
-	// holes = vertex<point>
-	// holes.push_back(point)
-	// holes[i].X = cos(holeAngleIncrement * i) * ringRadius
-	// holes[i].Y = sin(holeAngleIncrement * i) * ringRadius
+	// LIST VALUES - for i 0:numHoles
+	// holes = vector<vector3>
+	// holes.push_back(vector3)
+	// holes[i].X = cos(holeAngleIncrement * i) * ringDiameter
+	// holes[i].Y = sin(holeAngleIncrement * i) * ringDiameter
 	// holes[i].Z = ringBaseHeight + ringHeightIncrement * (i / numHolesPerRing)
 	// PEG CALCULATION VALUES, given hole1 and hole2
 	// holeXDiff = (hole2.X - hole1.X)
@@ -99,6 +104,59 @@ void Application::InitVariables(void)
 	// pegZTranslation = hole1.Z + ringHalfHeight
 	// !!!!! pegTranslation = translate(vector3(pegXTranslation, pegYTranslation, pegZTranslation))
 
+	// GIVENS
+	// height 7, width ?
+	uint numHolesPerRing = 36;
+	uint numHoles = 36 * 5;
+	uint numPegs = 30;// numPegs <= numHoles / 2
+	float ringDiameter = 10;
+	float ringBaseHeight = 5;
+	float ringHeightIncrement = 1;
+
+	// PRE-CALCULATED VALUES
+	float holeAngleIncrement = 360 / (float)numHolesPerRing;
+	float ringHalfHeight = ringHeightIncrement / 2;
+
+	// HOLE CENTERPOINT LOCATIONS
+	std::vector<vector3> holes;
+	for (uint i = 0; i < numHoles; i++)	{
+		holes.push_back(vector3(
+			cosf(holeAngleIncrement * i) * ringDiameter,// X
+			sinf(holeAngleIncrement * i) * ringDiameter,// Y
+			ringBaseHeight + ringHeightIncrement * i / numHolesPerRing// Z
+		));
+	}
+	std::vector<vector3> shuffledHoles = holes;
+	std::random_shuffle(shuffledHoles.begin(), shuffledHoles.end());
+
+	// PEG TRANSFORMATION CALCULATIONS
+	for (uint i = 0; i < numPegs; i++)
+	{
+		// start and end holes
+		vector3 hole1 = shuffledHoles[i];
+		vector3 hole2 = shuffledHoles[i + numPegs];
+
+		// calculated variables
+		float holeXDiff = (hole2.x - hole1.x);
+		float holeYDiff = (hole2.y - hole1.y);
+		float holeZDiff = (hole2.z - hole1.z);
+		float horizontalLength = sqrtf(powf(holeXDiff, 2) + powf(holeYDiff, 2));
+		float horizontalAngle = atanf(holeYDiff / holeXDiff);
+		float verticalAngle = atanf(holeZDiff / horizontalLength);
+		float distanceToCenter = abs(hole2.x * hole1.y - hole2.y * hole1.x) / horizontalLength;
+
+		// final transformations
+		glm::mat4 pegRotation = glm::rotate(horizontalAngle, vector3(0, 1, 0)) * glm::rotate(verticalAngle, vector3(1, 0, 0));
+		glm::mat4 pegTranslation = glm::translate(vector3(
+			distanceToCenter * cosf(horizontalAngle),
+			distanceToCenter * sinf(horizontalAngle),
+			hole1.z + ringHalfHeight
+		));
+
+		// generate pegs
+		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);
+		m_pEntityMngr->SetModelMatrix(pegTranslation * pegRotation);
+	}
 
 
 	//m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
