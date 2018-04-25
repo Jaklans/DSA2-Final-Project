@@ -284,7 +284,7 @@ bool Simplex::MyEntity::IsColliding(MyEntity* const other)
 	bool result = m_pRigidBody->IsColliding(other->GetRigidBody(), collisionForce);
 
 	if (result) {
-		AddForce(collisionForce);
+		AddForce(collisionForce * 20.0f);
 	}
 
 	return result;

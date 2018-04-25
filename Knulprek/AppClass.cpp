@@ -33,14 +33,18 @@ void Application::InitVariables(void)
 
 	*/
 
-	for (int i = 0; i < 3; i++) {
+	/*for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			for (int k = 0; k < 3; k++) {
 				m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
 				m_pEntityMngr->SetModelMatrix(glm::translate(vector3(i * 4 - 4, j * 4 + 25, k * 4 - 4)));
 			}
 		}
-	}
+	}*/
+
+	m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
+	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, 25, 0)));
+
 
 	for (int i = 0; i < 10; i++) {
 		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);

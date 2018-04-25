@@ -221,9 +221,9 @@ void Simplex::MyEntityManager::Update(void)
 			if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j])) 
 			{
 				//Resolve collisions
-				vector3 overlap;
-				m_mEntityArray[i]->AddForce(overlap * _pressure);
-				m_mEntityArray[j]->AddForce(overlap * -_pressure);
+				//vector3 overlap;
+				//m_mEntityArray[i]->AddForce(overlap * _pressure);
+				//m_mEntityArray[j]->AddForce(overlap * -_pressure);
 			}
 		}
 	}
@@ -334,133 +334,4 @@ void Simplex::MyEntityManager::AddEntityToRenderList(uint a_uIndex, bool a_bRigi
 	{
 		m_mEntityArray[a_uIndex]->AddToRenderList(a_bRigidBody);
 	}
-}
-void Simplex::MyEntityManager::AddEntityToRenderList(String a_sUniqueID, bool a_bRigidBody)
-{
-	//Get the entity
-	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
-	//if the entity exists
-	if (pTemp)
-	{
-		pTemp->AddToRenderList(a_bRigidBody);
-	}
-}
-void Simplex::MyEntityManager::AddDimension(uint a_uIndex, uint a_uDimension)
-{
-	//if the list is empty return
-	if (m_uEntityCount == 0)
-		return;
-
-	//if the index is larger than the number of entries we are asking for the last one
-	if (a_uIndex >= m_uEntityCount)
-		a_uIndex = m_uEntityCount - 1;
-
-	return m_mEntityArray[a_uIndex]->AddDimension(a_uDimension);
-}
-void Simplex::MyEntityManager::AddDimension(String a_sUniqueID, uint a_uDimension)
-{
-	//Get the entity
-	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
-	//if the entity exists
-	if (pTemp)
-	{
-		pTemp->AddDimension(a_uDimension);
-	}
-}
-void Simplex::MyEntityManager::RemoveDimension(uint a_uIndex, uint a_uDimension)
-{
-	//if the list is empty return
-	if (m_uEntityCount == 0)
-		return;
-
-	//if the index is larger than the number of entries we are asking for the last one
-	if (a_uIndex >= m_uEntityCount)
-		a_uIndex = m_uEntityCount - 1;
-
-	return m_mEntityArray[a_uIndex]->RemoveDimension(a_uDimension);
-}
-void Simplex::MyEntityManager::RemoveDimension(String a_sUniqueID, uint a_uDimension)
-{
-	//Get the entity
-	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
-	//if the entity exists
-	if (pTemp)
-	{
-		pTemp->RemoveDimension(a_uDimension);
-	}
-}
-void Simplex::MyEntityManager::ClearDimensionSetAll(void)
-{
-	for (uint i = 0; i < m_uEntityCount; ++i)
-	{
-		ClearDimensionSet(i);
-	}
-}
-void Simplex::MyEntityManager::ClearDimensionSet(uint a_uIndex)
-{
-	//if the list is empty return
-	if (m_uEntityCount == 0)
-		return;
-
-	//if the index is larger than the number of entries we are asking for the last one
-	if (a_uIndex >= m_uEntityCount)
-		a_uIndex = m_uEntityCount - 1;
-
-	return m_mEntityArray[a_uIndex]->ClearDimensionSet();
-}
-void Simplex::MyEntityManager::ClearDimensionSet(String a_sUniqueID)
-{
-	//Get the entity
-	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
-	//if the entity exists
-	if (pTemp)
-	{
-		pTemp->ClearDimensionSet();
-	}
-}
-bool Simplex::MyEntityManager::IsInDimension(uint a_uIndex, uint a_uDimension)
-{
-	//if the list is empty return
-	if (m_uEntityCount == 0)
-		return false;
-
-	//if the index is larger than the number of entries we are asking for the last one
-	if (a_uIndex >= m_uEntityCount)
-		a_uIndex = m_uEntityCount - 1;
-
-	return m_mEntityArray[a_uIndex]->IsInDimension(a_uDimension);
-}
-bool Simplex::MyEntityManager::IsInDimension(String a_sUniqueID, uint a_uDimension)
-{
-	//Get the entity
-	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
-	//if the entity exists
-	if (pTemp)
-	{
-		return pTemp->IsInDimension(a_uDimension);
-	}
-	return false;
-}
-bool Simplex::MyEntityManager::SharesDimension(uint a_uIndex, MyEntity* const a_pOther)
-{
-	//if the list is empty return
-	if (m_uEntityCount == 0)
-		return false;
-
-	//if the index is larger than the number of entries we are asking for the last one
-	if (a_uIndex >= m_uEntityCount)
-		a_uIndex = m_uEntityCount - 1;
-
-	return m_mEntityArray[a_uIndex]->SharesDimension(a_pOther);
-}
-bool Simplex::MyEntityManager::SharesDimension(String a_sUniqueID, MyEntity* const a_pOther)
-{
-	//Get the entity
-	MyEntity* pTemp = MyEntity::GetEntity(a_sUniqueID);
-	//if the entity exists
-	if (pTemp)
-	{
-		return pTemp->SharesDimension(a_pOther);
-	}
-	return false;
 }
