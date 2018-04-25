@@ -33,6 +33,7 @@ void Application::InitVariables(void)
 
 	*/
 
+	// Generate Spheres
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			for (int k = 0; k < 3; k++) {
@@ -42,16 +43,49 @@ void Application::InitVariables(void)
 		}
 	}
 
-	for (int i = 0; i < 10; i++) {
-		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);
-		m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, -i, 0)) * glm::rotate(18.0f * float(i), vector3(0, 1, 0)) * glm::rotate(90.0f, vector3(1, 0, 0)));
+	//// Generate Cylinders
+	//for (int i = 0; i < 10; i++) {
+	//	m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);
+	//	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, -i, 0)) * glm::rotate(18.0f * float(i), vector3(0, 1, 0)) * glm::rotate(90.0f, vector3(1, 0, 0)));
+	//}
+
+	// changeable parameters
+	int numPegs = 50;
+	float pegAngleVariationFactor = 0.2f; // maximum peg angular variation, factor of pegAngleIncrement
+	float pegHorizontalVariationFactor = 8;
+	float pegVerticalCompressionFactor = 0.2f;
+
+	//calculated values
+	float pegAngleIncrement = 180 / (float)numPegs;
+	std::vector<float> pegHeights;
+	for (int i = 0; i < numPegs; i++)
+	{
+		float currentPegAngleVariation = pegAngleIncrement * pegAngleVariationFactor * std::rand() / (float)RAND_MAX;
+		pegHeights.push_back(i * pegAngleIncrement + currentPegAngleVariation);
 	}
+	std::random_shuffle(pegHeights.begin(), pegHeights.end()); // shuffle angles so that we can generate heights in linear order
+
+	// DON'T SCALE, ask for different maya model instead
+	// generate cylinders
+	glm::mat4 flipPegToVertical = glm::rotate(90.0f, vector3(1, 0, 0));
+	for (int i = 0; i < numPegs; i++) {
+		glm::mat4 rotatePegHorizontally = glm::rotate(pegHeights[i], vector3(0, 1, 0));
+		glm::mat4 translatePegHeight = glm::translate(vector3(0, -i * pegVerticalCompressionFactor, 0));
+		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder);
+		m_pEntityMngr->SetModelMatrix(translatePegHeight * rotatePegHorizontally * flipPegToVertical);
+	}
+
+	// holeAngle = 360 / numHolesPerRing
+	// holeX = cos(holeAngle) * ringRadius
+	// holeY = sin(holeAngle) * ringRadius
+
 
 	//m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
 
 	m_uOctantLevels = 1;
 	m_pEntityMngr->Update();
 }
+
 void Application::Update(void)
 {
 	//Update the system so it knows how much time has passed since the last call
