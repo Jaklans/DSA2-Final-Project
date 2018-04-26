@@ -187,6 +187,8 @@ void Application::Display(void)
 	m_pEntityMngr->GetOctree()->Display();
 	m_pEntityMngr->GetOctree()->Refresh();
 
+	m_pMeshMngr->AddCylinderToRenderList(m_pEntityMngr->GetEntity(m_pEntityMngr->GetEntityIndex(tags.at(selectedPeg)))->GetModelMatrix() * glm::scale(vector3(1, 20, 1)), vector3(1, 0, 1), RENDER_WIRE);
+
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
 
