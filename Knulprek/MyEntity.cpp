@@ -1,6 +1,6 @@
 #include "MyEntity.h"
 
-#define NormalMagnitude 1.0f
+#define NormalMagnitude 8.0f
 
 using namespace Simplex;
 std::map<String, MyEntity*> MyEntity::m_IDMap;
@@ -192,7 +192,8 @@ bool Simplex::MyEntity::IsColliding(MyEntity* const other)
 	bool result = m_pRigidBody->IsColliding(other->GetRigidBody(), collisionForce);
 
 	if (result) {
-		AddForce(collisionForce * NormalMagnitude);
+		AddForce(collisionForce * -NormalMagnitude);
+		other->AddForce(collisionForce * NormalMagnitude);
 	}
 
 	return result;

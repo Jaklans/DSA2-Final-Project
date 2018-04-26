@@ -212,11 +212,10 @@ void Simplex::MyEntityManager::Update(void)
 	}
 
 
-	if (m_uEntityCount == 0) return;
 	//check collisions
-	for (uint i = 0; i < m_uEntityCount - 1; i++)
+	for (int i = 0; i < m_uEntityCount - 1; i++)
 	{
-		for (uint j = i + 1; j < m_uEntityCount; j++)
+		for (int j = i + 1; j < m_uEntityCount; j++)
 		{
 			if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j])) 
 			{

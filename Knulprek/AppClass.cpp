@@ -5,7 +5,7 @@ void Application::InitVariables(void)
 	//Set the position and target of the camera
 	m_pCameraMngr->SetPositionTargetAndUp(
 		vector3(0.0f, 0.0f, 100.0f), //Position
-		vector3(0.0f, 0.0f, 99.0f),	//Target
+		vector3(0.0f, 0.0f, 19.0f),	//Target
 		AXIS_Y);					//Up
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
@@ -33,17 +33,17 @@ void Application::InitVariables(void)
 
 	*/
 
-	/*for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			for (int k = 0; k < 3; k++) {
 				m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
 				m_pEntityMngr->SetModelMatrix(glm::translate(vector3(i * 4 - 4, j * 4 + 25, k * 4 - 4)));
 			}
 		}
-	}*/
+	}
 
-	m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
-	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, 25, 0)));
+	//m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
+	//m_pEntityMngr->SetModelMatrix(glm::translate(vector3(.1f, 100, 0)));
 
 
 	for (int i = 0; i < 20; i++) {
