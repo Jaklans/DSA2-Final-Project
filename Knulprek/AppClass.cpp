@@ -198,7 +198,8 @@ void Application::Display(void)
 	}
 	m_pEntityMngr->octUse = octreeEnabled;
 
-	m_pMeshMngr->AddCylinderToRenderList(m_pEntityMngr->GetEntity(m_pEntityMngr->GetEntityIndex(tags.at(selectedPeg)))->GetModelMatrix() * glm::scale(vector3(1, 16, 1)), vector3(1, 0, 1), RENDER_WIRE);
+	if(tags.size() > 0)
+		m_pMeshMngr->AddCylinderToRenderList(m_pEntityMngr->GetEntity(m_pEntityMngr->GetEntityIndex(tags.at(selectedPeg)))->GetModelMatrix() * glm::scale(vector3(1, 16, 1)), vector3(1, 0, 1), RENDER_WIRE);
 
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
