@@ -127,7 +127,7 @@ MyRigidBody::MyRigidBody(colliderType type)
 		m_v3MaxL = vector3(6, 24, 6);
 		m_v3MinL = -m_v3MaxL;
 
-		m_fRadius = 6;
+		m_fRadius = 3;
 		break;
 	}
 
@@ -276,6 +276,7 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 
 		if (bColliding) {
 			collisionForce = -difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			collisionForce = collisionForce * 5.0f;
 			bColliding = true;
 		}
 		break;
@@ -291,6 +292,7 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 
 		if (bColliding) {
 			collisionForce = difference / magnitude * (m_fRadius + a_pOther->m_fRadius - magnitude);
+			collisionForce = collisionForce * 1.f;
 			bColliding = true;
 		}
 		break;

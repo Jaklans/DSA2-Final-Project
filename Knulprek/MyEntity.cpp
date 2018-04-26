@@ -71,7 +71,11 @@ void Simplex::MyEntity::ApplyPhysics(float deltaTime)
 	if (m_pRigidBody->collider != sphere) return;
 	_velocity = _force * deltaTime;
 	_force = vector3();
-	//_velocity = glm::clamp( _velocity, 0.f, 5.5f);
+	if (_velocity.y < -30.0f) _velocity.y = -30.0f;
+	_velocity *= .950f;
+
+	//if (_velocity.y > 0) _velocity.y = 0;
+
 	SetModelMatrix(glm::translate(_velocity) * m_m4ToWorld);
 }
 void Simplex::MyEntity::SetOctAddress(OctreeAddress & val)
@@ -193,8 +197,8 @@ bool Simplex::MyEntity::IsColliding(MyEntity* const other)
 	bool result = m_pRigidBody->IsColliding(other->GetRigidBody(), collisionForce);
 
 	if (result) {
-		AddForce(collisionForce * -NormalMagnitude);
-		other->AddForce(collisionForce * NormalMagnitude);
+		AddForce(collisionForce * -NormalMagnitude * vector3(1, (collisionForce.y > 0 ? 1.f : 2.f), 1));
+		other->AddForce(collisionForce * NormalMagnitude * vector3(1, (collisionForce.y > 0 ? 2.f : 1.f), 1));
 	}
 
 	return result;

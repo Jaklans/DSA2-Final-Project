@@ -40,7 +40,7 @@ void Application::InitVariables(void)
 #pragma region GenerateSpheres
 	// GIVENS
 	// radius ?
-	uint numBalls = 30;
+	uint numBalls = 100;
 	float ballDiameter = 3;
 	float ballBaseHeight = 20;
 
@@ -64,11 +64,12 @@ void Application::InitVariables(void)
 	// height 7, width ?
 	uint numHolesPerRing = 36;
 	uint numHoles = numHolesPerRing * 5;
-	uint numPegs = 30;// numPegs <= numHoles / 2
+	uint numPegs = numHoles / 2;// numPegs <= numHoles / 2
 	float ringDiameter = cylinderDiameter;
 	float ringBaseHeight = 0;
-	float ringHeightIncrement = 3;
+	float ringHeightIncrement = 1.5f;
 	float minPegAngle = 140;// 0 - 180
+	float pegLength = /*ringDiameter * 1.5f / 8*/1;
 
 	// PRE-CALCULATED VALUES
 	float ringRadius = ringDiameter / 2;
@@ -155,10 +156,11 @@ void Application::InitVariables(void)
 			hole1.y + verticalLength / 2,
 			distanceToCenter * sinf(horizontalAngle)
 		));
+		glm::mat4 pegScale = glm::scale(vector3(1, pegLength, 1));
 
 		// generate pegs
 		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, "Peg" + i);
-		m_pEntityMngr->SetModelMatrix(pegTranslation * pegHorizontalRotation * pegVerticalRotation/* * glm::scale(vector3(1,2,1))*/);
+		m_pEntityMngr->SetModelMatrix(pegTranslation * pegHorizontalRotation * pegVerticalRotation * pegScale);
 
 		tags.push_back("Peg" + i);
 	}
@@ -166,7 +168,7 @@ void Application::InitVariables(void)
 	selectedPeg = 0;
 #pragma endregion GenerateCylinders
 
-	//m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
+	m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
 
 	m_uOctantLevels = 1;
 	m_pEntityMngr->Update();
