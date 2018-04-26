@@ -28,7 +28,11 @@ class Application
 	float cameraHeight = 5;
 
 private:
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
+	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //engine programmer
+	String m_sProgrammer1 = "Conner Catanese - clc8254@rit.edu"; //app programmer
+	String m_sProgrammer2 = "Mark DelFavero - mxd5700@rit.edu"; //app programmer
+	String m_sProgrammer3 = "Colin Friday - crf8764@rit.edu"; //app programmer
+	String m_sProgrammer4 = "John Shull - jxs2828@rit.edu"; //app programmer
 
 	static ImGuiObject gui; //GUI object
 	bool m_bGUI_Main = true; //show Main GUI window?
