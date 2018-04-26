@@ -26,6 +26,8 @@ class Application
 	int selectedPeg;
 	float cameraAngle = 0;
 	float cameraHeight = 5;
+	bool octreeEnabled = true;
+	bool octreeDisplay = true;
 
 private:
 	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //engine programmer

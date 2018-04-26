@@ -24,6 +24,7 @@ void Application::DrawGUI(void)
 	//Calculate the window size to know how to draw
 	NewFrame();
 
+	static ImVec4 v3Color = ImColor(0, 255, 0);
 	static ImVec4 v4Color = ImColor(255, 0, 0);
 	static ImVec4 v5Color = ImColor(66, 244, 143);
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
@@ -50,19 +51,33 @@ void Application::DrawGUI(void)
 			ImGui::Separator();
 			ImGui::Text("Control:\n");
 			ImGui::Text("W: Move Upward\n");
-			ImGui::Text("A: Rotate Clockwise\n");
 			ImGui::Text("S: Move Downward\n");
+			ImGui::Text("A: Rotate Clockwise\n");
 			ImGui::Text("D: Rotate Counterclockwise\n");
-			ImGui::Text("Space: Remove Cylinder\n");
 			ImGui::Text("Left/Right: Select Cylinder\n");
+			ImGui::Text("Space: Remove Cylinder\n");
 			ImGui::Separator();
-			ImGui::Text("PageUp: Increment Octant display\n");
-			ImGui::Text("PageDw: Decrement Octant display\n");
+			if (octreeEnabled){
+				ImGui::Text("Octree is ");
+				ImGui::TextColored(v3Color, "ON\n");
+				ImGui::Text("F1: Turn Octree Off\n");
+			}
+			else{
+				ImGui::Text("Octree is ");
+				ImGui::TextColored(v4Color, "OFF\n");
+				ImGui::Text("F1: Turn Octree On\n");
+			}
 			ImGui::Separator();
-			ImGui::Text("-: Increment Octree subdivision\n");
-			ImGui::Text("+: Decrement Octree subdivision\n");
-			ImGui::Separator();
-			ImGui::TextColored(ImColor(255, 255, 0), "Octree\n");
+			if (octreeDisplay) {
+				ImGui::Text("Octree Display is ");
+				ImGui::TextColored(v3Color, "ON\n");
+				ImGui::Text("F2: Turn Octree Display Off\n");
+			}
+			else {
+				ImGui::Text("Octree Display is ");
+				ImGui::TextColored(v4Color, "OFF\n");
+				ImGui::Text("F2: Turn Octree Display On\n");
+			}
 		}
 		ImGui::End();
 	}
