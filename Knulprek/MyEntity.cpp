@@ -1,6 +1,6 @@
 #include "MyEntity.h"
 
-#define NormalMagnitude 8.0f
+#define NormalMagnitude 10.0f
 
 using namespace Simplex;
 std::map<String, MyEntity*> MyEntity::m_IDMap;
@@ -63,6 +63,7 @@ void Simplex::MyEntity::Release(void)
 void Simplex::MyEntity::AddForce(vector3 force)
 {
 	//Everything has mass of 1 :D
+	if (m_pRigidBody->collider != sphere) return;
 	_force += force;
 }
 void Simplex::MyEntity::ApplyPhysics(float deltaTime)
@@ -70,7 +71,7 @@ void Simplex::MyEntity::ApplyPhysics(float deltaTime)
 	if (m_pRigidBody->collider != sphere) return;
 	_velocity = _force * deltaTime;
 	_force = vector3();
-
+	//_velocity = glm::clamp( _velocity, 0.f, 5.5f);
 	SetModelMatrix(glm::translate(_velocity) * m_m4ToWorld);
 }
 void Simplex::MyEntity::SetOctAddress(OctreeAddress & val)
@@ -180,7 +181,7 @@ void Simplex::MyEntity::GenUniqueID(String& a_sUniqueID)
 bool Simplex::MyEntity::IsColliding(MyEntity* const other)
 {
 	//if not in memory return
-	if (!m_bInMemory || !other->m_bInMemory)
+	if (!m_bInMemory || (!other->m_bInMemory && other->m_pRigidBody->collider != inverseCylinder))
 		return true;
 
 	//if the entities are not living in the same dimension
