@@ -133,10 +133,13 @@ void Application::InitVariables(void)
 		));
 
 		// generate pegs
-		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, "Peg" + i);
+		Simplex::String tag("Peg");
+		tag.push_back((char)(i + 'a')); 
+		
+		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, tag);
 		m_pEntityMngr->SetModelMatrix(pegTranslation * pegHorizontalRotation * pegVerticalRotation/* * glm::scale(vector3(1,2,1))*/);
-
-		tags.push_back("Peg" + i);
+		
+		tags.push_back(tag);
 	}
 
 	selectedPeg = 0;
