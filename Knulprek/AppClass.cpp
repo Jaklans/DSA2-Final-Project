@@ -35,13 +35,37 @@ void Application::InitVariables(void)
 
 	*/
 
+	float cylinderDiameter = 15;
+
+#pragma region GenerateSpheres
+	// GIVENS
+	// radius ?
+	uint numBalls = 30;
+	float ballDiameter = 3;
+	float ballBaseHeight = 20;
+
+	// calculated values
+	float innerRadius = (cylinderDiameter - ballDiameter) / 2;
+
+	// GENERATE SPHERES
+	for (uint i = 0; i < numBalls; i++) {
+		float randAngle = rand() / (float)RAND_MAX * 2 * PI;
+		float randMag = rand() / (float)RAND_MAX * innerRadius;
+		float currX = randMag * cosf(randAngle);
+		float currZ = randMag * sinf(randAngle);
+		float currY = ballBaseHeight + ballDiameter * i;
+		m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere, "Ball" + i);
+		m_pEntityMngr->SetModelMatrix(glm::translate(vector3(currX, currY, currZ)));
+	}
+#pragma endregion GenerateSpheres
+
 #pragma region GenerateCylinders
 	// GIVENS
 	// height 7, width ?
 	uint numHolesPerRing = 36;
 	uint numHoles = numHolesPerRing * 5;
 	uint numPegs = 30;// numPegs <= numHoles / 2
-	float ringDiameter = 20;
+	float ringDiameter = cylinderDiameter;
 	float ringBaseHeight = 0;
 	float ringHeightIncrement = 3;
 	float minPegAngle = 140;// 0 - 180
@@ -144,18 +168,6 @@ void Application::InitVariables(void)
 
 	selectedPeg = 0;
 #pragma endregion GenerateCylinders
-
-#pragma region GenerateSpheres
-	//// Generate Spheres
-	//for (int i = 0; i < 3; i++) {
-	//	for (int j = 0; j < 3; j++) {
-	//		for (int k = 0; k < 3; k++) {
-	//			m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
-	//			m_pEntityMngr->SetModelMatrix(glm::translate(vector3(i * 4 - 4, j * 4 + 25, k * 4 - 4)));
-	//		}
-	//	}
-	//}
-#pragma endregion GenerateSpheres
 
 	//m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
 
