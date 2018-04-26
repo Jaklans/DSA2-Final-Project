@@ -1,4 +1,5 @@
 #include "AppClass.h"
+#include "Configuration.h"
 using namespace Simplex;
 void Application::InitVariables(void)
 {
@@ -12,35 +13,12 @@ void Application::InitVariables(void)
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
-	/*
-#ifdef DEBUG
-	uint uInstances = 900;
-#else
-	uint uInstances = 1849;
-#endif
-	int nSquare = static_cast<int>(std::sqrt(uInstances));
-	m_uObjects = nSquare * nSquare;
-	uint uIndex = -1;
-	for (int i = 0; i < nSquare; i++)
-	{
-		for (int j = 0; j < nSquare; j++)
-		{
-			uIndex++;
-			m_pEntityMngr->AddEntity("Minecraft\\Cube.obj");
-			vector3 v3Position = vector3(glm::sphericalRand(34.0f));
-			matrix4 m4Position = glm::translate(v3Position);
-			m_pEntityMngr->SetModelMatrix(m4Position);
-		}
-	}
-
-	*/
-
 	float cylinderDiameter = 15;
-
+	
 #pragma region GenerateSpheres
 	// GIVENS
 	// radius ?
-	uint numBalls = 1500;
+	uint numBalls = k_BALLCOUNT;
 	float ballDiameter = 3;
 	float ballBaseHeight = 20;
 
@@ -162,7 +140,7 @@ void Application::InitVariables(void)
 		Simplex::String tag("Peg");
 		tag.push_back((char)(i + 'a')); 
 		
-		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, tag);
+		m_pEntityMngr->AddEntity("Knulprek//Cylinder2.fbx", cylinder, tag);
 		m_pEntityMngr->SetModelMatrix(pegTranslation * pegHorizontalRotation * pegVerticalRotation/* * glm::scale(vector3(1,2,1))*/);
 		
 		tags.push_back(tag);
@@ -170,6 +148,17 @@ void Application::InitVariables(void)
 
 	selectedPeg = 0;
 #pragma endregion GenerateCylinders
+	
+
+	//m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
+	//m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, 25, 0)));
+	//m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
+	//m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, 28, 0)));
+	
+	//for (int i = 0; i < 20; i++) {
+	//	m_pEntityMngr->AddEntity("Knulprek//Cylinder2.fbx", cylinder, "Cylinder");
+	//	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, -i / 2.0f + 2, 0)) * glm::rotate(9.0f * float(i), vector3(0, 1, 0)) * glm::rotate(90.0f, vector3(1, 0, 0)));
+	//}
 
 	m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
 

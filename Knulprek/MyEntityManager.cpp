@@ -1,6 +1,8 @@
 #include "MyEntityManager.h"
+#include "Configuration.h"
 using namespace Simplex;
 
+int counter = 0;
 
 void Simplex::MyEntityManager::SetGrav(vector3 grav)
 {
@@ -27,12 +29,13 @@ Octree * Simplex::MyEntityManager::GetOctree()
 Simplex::MyEntityManager* Simplex::MyEntityManager::m_pInstance = nullptr;
 void Simplex::MyEntityManager::Init(void)
 {
-	_gravity = vector3(0, -2.5f, 0);//vector3(0, -9.8f, 0);
+	_gravity = vector3(0, k_GRAVITY, 0);//vector3(0, -9.8f, 0);
 	_pressure = 4;
-	_oct.Initialize(vector3(-14.0f, -14.0f, -14.0f), vector3(14.0f, 10000.0f, 14.0f));
+	_oct.Initialize(vector3(-5.0f, -7.5f, -5.0f), vector3(5.0f, 300.0f, 5.0f));
 	m_uEntityCount = 0;
 	m_mEntityArray = nullptr;
 	octUse = true;
+	ballcount = k_BALLCOUNT;
 }
 void Simplex::MyEntityManager::Release(void)
 {
@@ -195,36 +198,83 @@ Simplex::MyEntityManager::~MyEntityManager(){Release();};
 void Simplex::MyEntityManager::Update(void)
 {
 	//_oct.ReOptimize();
+	counter++;
+	if (counter > 120) {
+		vector3 min = vector3();
+		vector3 max = vector3();
+		for (int i = 0; i < m_uEntityCount - 1; i++) {
+			MyRigidBody* rb = m_mEntityArray[i]->GetRigidBody();
+			if (rb->GetMaxGlobal().x > max.x) max.x = rb->GetMaxGlobal().x;
+			if (rb->GetMaxGlobal().y > max.y) max.y = rb->GetMaxGlobal().y;
+			if (rb->GetMaxGlobal().z > max.z) max.z = rb->GetMaxGlobal().z;
+
+			if (rb->GetMinGlobal().x < min.x) min.x = rb->GetMinGlobal().x;
+			if (rb->GetMinGlobal().y < min.y) min.y = rb->GetMinGlobal().y;
+			if (rb->GetMinGlobal().z < min.z) min.z = rb->GetMinGlobal().z;
+		}
+		_oct.Initialize(min, max);
+		counter = 0;
+	}
+
+
 
 	//Clear all collisions
-	for (uint i = 0; i < m_uEntityCount; i++)
+	for (int i = 0; i < m_uEntityCount; i++)
 	{
 		m_mEntityArray[i]->ClearCollisionList();
 	}
 
-	//Physics
-	for (uint i = 0; i < m_uEntityCount; i++)
+	for (int i = 0; i < m_uEntityCount; i++)
 	{
-		//Apply gravity
-		m_mEntityArray[i]->AddForce(_gravity);
-		//Move everything
-		m_mEntityArray[i]->ApplyPhysics(.1f);
 		m_mEntityArray[i]->SetOctAddress(octUse ? _oct.GetAddress(m_mEntityArray[i]->GetRigidBody()->GetMinGlobal(), m_mEntityArray[i]->GetRigidBody()->GetMaxGlobal()) : OctreeAddress());
 	}
 
 
-	//check collisions
-	for (int i = 0; i < m_uEntityCount - 1; i++)
+	//GRAVITY
+	for (int i = 0; i < ballcount; i++)
 	{
-		for (int j = i + 1; j < m_uEntityCount; j++)
+		m_mEntityArray[i]->AddForce(_gravity);
+	}
+
+	//PEGS
+	for (int i = 0; i < ballcount; i++)
+	{
+		for (int j = ballcount; j < m_uEntityCount - 1; j++)
 		{
-			if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j])) 
-			{
-				//Resolve collisions
-				//vector3 overlap;
-				//m_mEntityArray[i]->AddForce(overlap * _pressure);
-				//m_mEntityArray[j]->AddForce(overlap * -_pressure);
-			}
+			m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
+		}
+	}
+
+	//BALLS
+	for (int i = 0; i < ballcount; i++)
+	{
+		for (int j = 0; j < ballcount; j++)
+		{
+			m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
+		}
+	}
+
+	//BOUNDS
+	for (int i = 0; i < ballcount; i++) 
+	{
+		m_mEntityArray[i]->IsColliding(m_mEntityArray[m_uEntityCount - 1]);
+	}
+
+	
+	//APPLY
+	for (int i = 0; i < ballcount; i++)
+	{
+		m_mEntityArray[i]->ApplyPhysics(.1f);
+	}
+
+
+	//REMOVE
+	for (int i = 0; i < ballcount; i++)
+	{
+		if (m_mEntityArray[i]->GetRigidBody()->m_v3CenterG.y < -10)
+		{
+			RemoveEntity(i);
+			ballcount--;
 		}
 	}
 }

@@ -19,6 +19,7 @@ class MyEntityManager
 	float _pressure;
 	//Octree
 	Octree _oct;
+	int ballcount;
 public:
 	bool octUse;
 	//Physics

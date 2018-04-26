@@ -26,6 +26,7 @@ class Application
 	int selectedPeg;
 	float cameraAngle = 0;
 	float cameraHeight = 5;
+	float cameraDistance = 50;
 	bool octreeEnabled = true;
 	bool octreeDisplay = true;
 

@@ -1,4 +1,6 @@
 #include "MyRigidBody.h"
+#include "Configuration.h"
+
 using namespace Simplex;
 //Allocation
 void MyRigidBody::Init(void)
@@ -124,10 +126,10 @@ MyRigidBody::MyRigidBody(colliderType type)
 		m_fRadius = .25f;
 		break;
 	case inverseCylinder:
-		m_v3MaxL = vector3(6, 24, 6);
+		m_v3MaxL = vector3(3, 24, 3);
 		m_v3MinL = -m_v3MaxL;
 
-		m_fRadius = 3;
+		m_fRadius = 4;
 		break;
 	}
 
@@ -261,6 +263,7 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 
 		if (bColliding) {
 			collisionForce = difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			if (collisionForce.y > 0) collisionForce.y = 0;
 			bColliding = true;
 		}
 		break;
@@ -276,7 +279,6 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 
 		if (bColliding) {
 			collisionForce = -difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
-			collisionForce = collisionForce * 5.0f;
 			bColliding = true;
 		}
 		break;
@@ -291,8 +293,7 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 		bColliding = magnitude > -m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			collisionForce = difference / magnitude * (m_fRadius + a_pOther->m_fRadius - magnitude);
-			collisionForce = collisionForce * 1.f;
+			collisionForce = difference / magnitude * ( a_pOther->m_fRadius - m_fRadius - magnitude);
 			bColliding = true;
 		}
 		break;

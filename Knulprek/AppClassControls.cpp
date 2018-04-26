@@ -64,6 +64,7 @@ void Application::ProcessMouseScroll(sf::Event a_event)
 	if (fMultiplier)
 		fSpeed *= 2.0f;
 	m_pCameraMngr->MoveForward(-fSpeed);
+	cameraDistance -= fSpeed;
 }
 //Keyboard
 void Application::ProcessKeyPressed(sf::Event a_event)
@@ -454,7 +455,7 @@ void Application::ProcessKeyboard(void)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		cameraAngle += .05;
 
-	m_pCameraMngr->SetPositionTargetAndUp(vector3(50 * sin(cameraAngle), cameraHeight, 50 * cos(cameraAngle)), vector3(0, 5, 0), vector3(0, 1, 0));
+	m_pCameraMngr->SetPositionTargetAndUp(vector3(cameraDistance * sin(cameraAngle), cameraHeight, cameraDistance * cos(cameraAngle)), vector3(0, 5, 0), vector3(0, 1, 0));
 #pragma endregion
 }
 //Joystick
