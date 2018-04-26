@@ -87,11 +87,9 @@ OctreeAddress Octree::GetAddress(vector3 min, vector3 max)
 //Resets the draw logic
 void Octree::Refresh()
 {
-	DisplayOctant[0] = true;
-	for (size_t i = 1; i < DisplayOctant.size(); i++)
-	{
-		DisplayOctant[i] = false;
-	}
+	
+	int size = pow(8, OctreeAddress::depth);
+	DisplayOctant = std::vector<bool>(size);DisplayOctant[0] = true;
 }
 
 //Declare that an octant will be shown

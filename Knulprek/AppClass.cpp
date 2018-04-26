@@ -7,7 +7,7 @@ void Application::InitVariables(void)
 	//Set the position and target of the camera
 	m_pCameraMngr->SetPositionTargetAndUp(
 		vector3(0.0f, 0.0f, 100.0f), //Position
-		vector3(0.0f, 0.0f, 99.0f),	//Target
+		vector3(0.0f, 0.0f, 19.0f),	//Target
 		AXIS_Y);					//Up
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
