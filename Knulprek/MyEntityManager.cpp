@@ -232,7 +232,7 @@ void Simplex::MyEntityManager::AddEntity(String a_sFileName, colliderType type, 
 	//Create a temporal entity to store the object
 	MyEntity* pTemp = new MyEntity(a_sFileName, type, a_sUniqueID);
 	//if I was able to generate it add it to the list
-	if (pTemp->IsInitialized())
+	if (pTemp->IsInitialized() || type == inverseCylinder)
 	{
 		//create a new temp array with one extra entry
 		PEntity* tempArray = new PEntity[m_uEntityCount + 1];

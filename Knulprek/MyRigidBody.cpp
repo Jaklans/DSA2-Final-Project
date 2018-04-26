@@ -275,7 +275,7 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 		bColliding = magnitude < m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			collisionForce = difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			collisionForce = -difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
 			bColliding = true;
 		}
 		break;
@@ -287,10 +287,10 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther, vector3& collisionFor
 		difference = a_pOther->cylinderNormal * glm::dot(a_pOther->cylinderNormal, thisCenter) - thisCenter;
 		magnitude = glm::distance(difference, ZERO_V3);
 
-		bColliding = magnitude > m_fRadius + a_pOther->m_fRadius;
+		bColliding = magnitude > -m_fRadius + a_pOther->m_fRadius;
 
 		if (bColliding) {
-			collisionForce = difference * (magnitude - m_fRadius - a_pOther->m_fRadius);
+			collisionForce = difference / magnitude * (m_fRadius + a_pOther->m_fRadius - magnitude);
 			bColliding = true;
 		}
 		break;
