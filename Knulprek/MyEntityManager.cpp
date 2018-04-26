@@ -31,7 +31,7 @@ void Simplex::MyEntityManager::Init(void)
 {
 	_gravity = vector3(0, k_GRAVITY, 0);//vector3(0, -9.8f, 0);
 	_pressure = 4;
-	_oct.Initialize(vector3(-5.0f, -7.5f, -5.0f), vector3(5.0f, 300.0f, 5.0f));
+	_oct.Initialize(vector3(-5.0f, -7.5f, -5.0f), vector3(5.0f, 5.0f, 5.0f));
 	m_uEntityCount = 0;
 	m_mEntityArray = nullptr;
 	octUse = true;
@@ -197,7 +197,7 @@ Simplex::MyEntityManager::~MyEntityManager(){Release();};
 // other methods
 void Simplex::MyEntityManager::Update(void)
 {
-	//_oct.ReOptimize();
+	_oct.ReOptimize();
 	counter++;
 	if (counter > 120) {
 		vector3 min = vector3();

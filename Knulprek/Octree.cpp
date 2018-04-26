@@ -31,18 +31,18 @@ void Octree::Initialize(vector3 min, vector3 max)
 OctreeAddress Octree::GetAddress(vector3 min, vector3 max)
 {
 	//optimization
-	/*if (min.x < _min.x)
-		_min.x = min.x;
 	if (min.y < _min.y)
 		_min.y = min.y;
-	if (min.z < _min.z)
-		_min.z = min.z;
-	if (_max.x < max.x)
-		_max.x = max.x;
 	if (_max.y < max.y)
 		_max.y = max.y;
+	if (min.x < _min.x)
+		_min.x = min.x;
+	if (_max.x < max.x)
+		_max.x = max.x;
+	if (min.z < _min.z)
+		_min.z = min.z;
 	if (_max.z < max.z)
-		_max.z = max.z;*/
+		_max.z = max.z;
 	OctreeAddress ret = OctreeAddress();
 
 	vector3 cen = _center;
@@ -122,7 +122,7 @@ void Octree::Display()
 
 void Octree::ReOptimize()
 {
-	//Initialize(_min, _max);
+	Initialize(_min, _max);
 }
 
 //Draw the subnodes recursively
@@ -130,8 +130,8 @@ void Octree::Draw(int index, vector3 center, vector3 halfSize)
 {
 	if (index < DisplayOctant.size() && DisplayOctant[index]) {
 		MeshManager::GetInstance()->AddWireCubeToRenderList(glm::translate(center) * glm::scale(halfSize * 2.0f), vector3(1, .5f, .3f));
-		halfSize /= 2;
-		vector3 mod = -halfSize;
+		halfSize.y /= 2;
+		vector3 mod (0, -halfSize.y, 0);
 		for (size_t i = 1; i <= 8; i++)
 		{
 			Draw(index * 8 + i, center + mod, halfSize);
@@ -153,14 +153,14 @@ void Octree::Draw(int index, vector3 center, vector3 halfSize)
 //3: z is high
 unsigned _int8 Octree::Oct(vector3 center, vector3 location)
 {
-	if(location.x == center.x || location.y == center.y || location.z == center.z)
-		return 0;
+	//if(location.x == center.x || location.y == center.y || location.z == center.z)
+	//	return 0;
 	_int8 ret = 1;
-	if (location.x > center.x)
-		ret = ret | (1 << 1);
+	//if (location.x > center.x)
+	//	ret = ret | (1 << 1);
 	if (location.y > center.y)
 		ret = ret | (1 << 2);
-	if (location.z > center.z)
-		ret = ret | (1 << 3);
+	//if (location.z > center.z)
+	//	ret = ret | (1 << 3);
 	return ret;
 }

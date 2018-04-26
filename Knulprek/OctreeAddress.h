@@ -4,7 +4,7 @@ class OctreeAddress
 {
 public:
 	//The depth that address are
-	static const unsigned int depth = 5;
+	static const unsigned int depth = 8;
 private:
 	//Masks that need to be used a lot
 	const unsigned _int8 masks[2] = {15, 15 << 4};
