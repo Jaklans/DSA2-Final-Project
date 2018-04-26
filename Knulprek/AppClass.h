@@ -24,6 +24,8 @@ class Application
 
 	std::vector<String> tags;
 	int selectedPeg;
+	float cameraAngle = 0;
+	float cameraHeight = 5;
 
 private:
 	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
