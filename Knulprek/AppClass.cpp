@@ -159,10 +159,13 @@ void Application::InitVariables(void)
 		glm::mat4 pegScale = glm::scale(vector3(1, pegLength, 1));
 
 		// generate pegs
-		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, "Peg" + i);
-		m_pEntityMngr->SetModelMatrix(pegTranslation * pegHorizontalRotation * pegVerticalRotation * pegScale);
-
-		tags.push_back("Peg" + i);
+		Simplex::String tag("Peg");
+		tag.push_back((char)(i + 'a')); 
+		
+		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, tag);
+		m_pEntityMngr->SetModelMatrix(pegTranslation * pegHorizontalRotation * pegVerticalRotation/* * glm::scale(vector3(1,2,1))*/);
+		
+		tags.push_back(tag);
 	}
 
 	selectedPeg = 0;
