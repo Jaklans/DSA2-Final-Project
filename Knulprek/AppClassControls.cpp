@@ -111,6 +111,32 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		bFPSControl = !bFPSControl;
 		m_pCameraMngr->SetFPS(bFPSControl);
 		break;
+	case sf::Keyboard::Space:
+		if (tags.size() > 0) {
+			m_pEntityMngr->RemoveEntity(tags[selectedPeg]);
+			tags.erase(tags.begin() + selectedPeg);
+			if (tags.size() > 0) {
+				selectedPeg = selectedPeg % tags.size();
+			}
+			
+		}
+		break;
+	case sf::Keyboard::Left:
+		if (selectedPeg == 0) {
+			selectedPeg = tags.size() - 1;
+		}
+		else {
+			selectedPeg--;
+		}
+		break;
+	case sf::Keyboard::Right:
+		if (selectedPeg >= tags.size() - 1) {
+			selectedPeg = 0;
+		}
+		else {
+			selectedPeg++; 
+		}	
+		break;
 	case sf::Keyboard::PageUp:
 		++m_uOctantID;
 		/*

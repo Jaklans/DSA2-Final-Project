@@ -133,9 +133,13 @@ void Application::InitVariables(void)
 		));
 
 		// generate pegs
-		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, "Peg");
+		m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", cylinder, "Peg" + i);
 		m_pEntityMngr->SetModelMatrix(pegTranslation * pegHorizontalRotation * pegVerticalRotation/* * glm::scale(vector3(1,2,1))*/);
+
+		tags.push_back("Peg" + i);
 	}
+
+	selectedPeg = 0;
 #pragma endregion GenerateCylinders
 
 #pragma region GenerateSpheres
