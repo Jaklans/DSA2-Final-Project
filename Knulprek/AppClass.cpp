@@ -42,8 +42,8 @@ void Application::InitVariables(void)
 		}
 	}
 
-	//m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
-	//m_pEntityMngr->SetModelMatrix(glm::translate(vector3(.1f, 100, 0)));
+	m_pEntityMngr->AddEntity("Knulprek//Sphere.fbx", sphere);
+	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(10.0f, 30, 0)));
 
 
 	for (int i = 0; i < 20; i++) {
@@ -51,7 +51,7 @@ void Application::InitVariables(void)
 		m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0, -i / 2.0f + 2, 0)) * glm::rotate(9.0f * float(i), vector3(0, 1, 0)) * glm::rotate(90.0f, vector3(1, 0, 0)));
 	}
 
-	//m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
+	m_pEntityMngr->AddEntity("Knulprek//Cylinder.fbx", inverseCylinder);
 
 	m_uOctantLevels = 1;
 	m_pEntityMngr->Update();
