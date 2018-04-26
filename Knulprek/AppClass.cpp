@@ -40,7 +40,7 @@ void Application::InitVariables(void)
 #pragma region GenerateSpheres
 	// GIVENS
 	// radius ?
-	uint numBalls = 100;
+	uint numBalls = 1500;
 	float ballDiameter = 3;
 	float ballBaseHeight = 20;
 
@@ -200,9 +200,14 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	Octree::display = true;
-	m_pEntityMngr->GetOctree()->Display();
-	m_pEntityMngr->GetOctree()->Refresh();
+
+	Octree::display = octreeDisplay;
+	if (octreeDisplay)
+	{
+		m_pEntityMngr->GetOctree()->Display();
+		m_pEntityMngr->GetOctree()->Refresh();
+	}
+	m_pEntityMngr->octUse = octreeEnabled;
 
 	m_pMeshMngr->AddCylinderToRenderList(m_pEntityMngr->GetEntity(m_pEntityMngr->GetEntityIndex(tags.at(selectedPeg)))->GetModelMatrix() * glm::scale(vector3(1, 16, 1)), vector3(1, 0, 1), RENDER_WIRE);
 

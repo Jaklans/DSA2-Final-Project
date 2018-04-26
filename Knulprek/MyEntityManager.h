@@ -20,6 +20,7 @@ class MyEntityManager
 	//Octree
 	Octree _oct;
 public:
+	bool octUse;
 	//Physics
 	void SetGrav(vector3 grav);
 	vector3 GetGrav();

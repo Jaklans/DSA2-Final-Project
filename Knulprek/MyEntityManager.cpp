@@ -29,9 +29,10 @@ void Simplex::MyEntityManager::Init(void)
 {
 	_gravity = vector3(0, -2.5f, 0);//vector3(0, -9.8f, 0);
 	_pressure = 4;
-	_oct.Initialize(vector3(-34.0f, -34.0f, -34.0f), vector3(34.0f, 1000.0f, 34.0f));
+	_oct.Initialize(vector3(-14.0f, -14.0f, -14.0f), vector3(14.0f, 10000.0f, 14.0f));
 	m_uEntityCount = 0;
 	m_mEntityArray = nullptr;
+	octUse = true;
 }
 void Simplex::MyEntityManager::Release(void)
 {
@@ -208,7 +209,7 @@ void Simplex::MyEntityManager::Update(void)
 		m_mEntityArray[i]->AddForce(_gravity);
 		//Move everything
 		m_mEntityArray[i]->ApplyPhysics(.1f);
-		m_mEntityArray[i]->SetOctAddress(_oct.GetAddress(m_mEntityArray[i]->GetRigidBody()->GetMinGlobal(), m_mEntityArray[i]->GetRigidBody()->GetMaxGlobal()));
+		m_mEntityArray[i]->SetOctAddress(octUse ? _oct.GetAddress(m_mEntityArray[i]->GetRigidBody()->GetMinGlobal(), m_mEntityArray[i]->GetRigidBody()->GetMaxGlobal()) : OctreeAddress());
 	}
 
 
